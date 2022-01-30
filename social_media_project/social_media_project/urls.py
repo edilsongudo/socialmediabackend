@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from core.views import PostViewSet
+from core.views import PostViewSet, postLikeOrDislike
 
 
 router = routers.DefaultRouter()
@@ -12,6 +12,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include("accounts.urls")),
     path('', include(router.urls)),
+    path('post-like-or-dislike/<str:id>/', postLikeOrDislike, name="post-like-dislike"),
 ]
-
-# path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
