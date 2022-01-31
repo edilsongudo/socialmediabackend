@@ -1,13 +1,21 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
 from rest_framework import routers, permissions
-from core.views import PostViewSet, postLikeOrDislike
+# from core.views import PostViewSet, postLikeOrDislike
+from core.views import (
+   postList,
+   postDetail,
+   postCreate,
+   postDelete,
+   postUpdate,
+   postLikeOrDislike,
+   apiOverview)
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 
-router = routers.DefaultRouter()
-router.register(r'posts', PostViewSet)
+# router = routers.DefaultRouter()
+# router.register(r'posts', PostViewSet)
 
 
 schema_view = get_schema_view(
@@ -27,7 +35,13 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include("accounts.urls")),
-    path('', include(router.urls)),
+    # path('', include(router.urls)),
+    path('', apiOverview, name="api-overview"),
+    path('post-list/', postList, name="post-list"),
+    path('post-detail/<str:pk>/', postDetail, name="post-detail"),
+    path('post-create/', postCreate, name="post-create"),
+    path('post-update/<str:pk>/', postUpdate, name="post-update"),
+    path('post-delete/<str:pk>/', postDelete, name="post-delete"),
     path('post-like-or-dislike/<str:id>/', postLikeOrDislike, name="post-like-dislike"),
 ]
 
