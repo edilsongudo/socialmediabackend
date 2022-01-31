@@ -1,10 +1,12 @@
+from django.shortcuts import redirect
 from .models import Post
+from django.contrib.auth.models import User
 from .serializers import PostSerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view
 from rest_framework.exceptions import PermissionDenied, NotAuthenticated
 
 
@@ -20,20 +22,20 @@ from rest_framework.exceptions import PermissionDenied, NotAuthenticated
 
 @api_view(['GET'])
 def apiOverview(request):
-    api_urls = {
-        'List':'/post-list/',
-        'Detail View':'/post-detail/<str:pk>/',
-        'Create':'/post-create/',
-        'Update':'/post-update/<str:pk>/',
-        'Delete':'/post-delete/<str:pk>/',
-        }
-
-    return Response(api_urls)
+    return redirect('schema-swagger-ui')
 
 
 @api_view(['GET'])
 def postList(request):
     posts = Post.objects.all().order_by('-id')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def postByUserList(request, pk):
+    author = User.objects.get(id=pk)
+    posts = Post.objects.filter(author=author).order_by('-id')
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
@@ -105,4 +107,3 @@ def postLikeOrDislike(request, id):
         post.likes.add(request.user)
         print('like')
         return Response({"details": "liked"})
-
